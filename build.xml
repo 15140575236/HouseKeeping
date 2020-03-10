@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="zip" name="OIMSimpHouseKeeping">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <property name="buildfolder" value="build"/> 
+    <path id="OIMSimpHouseKeeping.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/commons-logging-1.2.jar"/>
+        <pathelement location="lib/db2jcc_license_cu.jar"/>
+    	<pathelement location="lib/db2jcc.jar"/>
+    </path>
+    <target name="init" depends="clean">
+    	<tstamp>
+			<!-- Use Eastern Standard Time in jar Manifest -->
+			<format property="jar.date" pattern="EEE MM/dd/yyyy" timezone="America/New_York"/>
+		</tstamp>
+		<tstamp>
+			<format property="jar.time" pattern="hh:mm:ss.SS" timezone="America/New_York"/>
+		</tstamp>    	
+        <mkdir dir="bin"/>
+    	<mkdir dir="build"/>
+    	<echo message="bin and build folder recreated"/>
+    </target>
+    <target name="clean">
+    	<echo message="deleting bin and build"/>
+        <delete dir="bin"/>
+    	<delete dir="build"/>
+    </target>
+    <target name="build" depends="init">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="OIMSimpHouseKeeping.classpath"/>
+        </javac>
+    </target>
+
+	<target name="build-jar" depends="build"  description="export as jar">        	
+		<jar destfile="${buildfolder}/OIMSimpHouseKeeping.jar"  basedir="bin" filesetmanifest="skip" update="true">
+			<manifest>
+				<section name="Build Information">
+					<attribute name="Built-By" value="${user.name}"/>
+					<attribute name="Build-Version" value="Built on ${jar.date} at ${jar.time}"/> 
+					<attribute name="Build-Date" value="${jar.date} ${jar.time}"/>
+        			<attribute name="Version-Timezone" value="Eastern Standard Time: America/New_York"/>
+				</section>
+			</manifest>
+		</jar>
+		<copy file="${buildfolder}/OIMSimpHouseKeeping.jar" todir="${basedir}"/>
+	</target>
+	<target name="zip" depends="build-jar">
+		<tstamp>
+			<!-- Use local System time in message -->
+			<format property="eFinish.timestamp" pattern="EEE MM/dd/yyyy HH:mm:ss.SS" />
+			<format property="backup.time" pattern="yyyyMMddHHmmss"/>
+		</tstamp>
+		<copy todir="${buildfolder}/lib">
+			<fileset dir="${basedir}/lib" />
+		</copy>
+		<mkdir dir="build/logs"/>
+		<copy file="${basedir}/src/rdhclientconfig.properties" tofile="${buildfolder}/rdhclientconfig.properties" />
+		<copy file="${basedir}/housekeeping-aix" todir="${buildfolder}" />
+		<tar destfile="${basedir}/OIMSimpHouseKeeping.tar" basedir="${buildfolder}">
+		   <include name="**/*" />
+		</tar>
+	</target>
+</project>

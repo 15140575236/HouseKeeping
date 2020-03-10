@@ -1,0 +1,7 @@
+#!/bin/sh
+cd /home/oimsimp/OIMSimpHouseKeeping
+echo "*** deleting the following reports ***"
+find ./logs -type f -mtime +30 -print -exec rm -f {} \;
+echo "*** end ***"
+export PATH=/usr/IBM/WebSphere85/AppServer/java/bin:$PATH
+java -ms128M -mx512M -ss4M -oss4M -classpath :./lib/db2jcc.jar:./lib/db2jcc_license_cu.jar:./lib/commons-logging-1.2.jar:./OIMSimpHouseKeeping.jar com.ibm.keeping.ParkKeepingMain >1.out >2.out

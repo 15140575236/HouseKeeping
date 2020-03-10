@@ -1,0 +1,8 @@
+cd /home/oimsimp/OIMSimpHouseKeeping
+tar -xvf OIMSimpHouseKeeping.tar
+chmod 755 housekeeping-aix
+./housekeeping-aix
+
+
+-rw-r--r--    1 oimsimp  staff           418 May 23 04:46 housekeeping-aix
+-rwxr-xr-x    1 oimsimp  staff           418 May 23 04:46 housekeeping-aix*
